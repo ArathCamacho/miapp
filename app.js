@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Middleware para servir archivos estáticos desde el directorio principal
-app.use(express.static(__dirname));
+app.use(express.static(path.dirname(__dirname)));
 
 // Conexión a la base de datos MySQL (configuración básica, ajusta según tu entorno)
 const mysql = require('mysql2');
