@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const bodyParser = require('body-parser');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Middleware para manejar datos de formularios
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -60,8 +60,6 @@ app.post('/registro', async (req, res) => {
         res.status(500).send('Error al registrar usuario');
     }
 });
-
-
 // Servir archivo HTML principal
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
