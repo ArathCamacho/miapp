@@ -9,18 +9,19 @@ const port = process.env.PORT || 3000;
 // Middleware para manejar datos de formularios
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Middleware para servir archivos estáticos desde la raíz
-app.use(express.static(path.join(__dirname)));
+// Middleware para servir archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Conexión a la base de datos MySQL (sustituye con tus propios detalles de conexión)
+// Conexión a la base de datos MySQL (configuración básica, ajusta según tu entorno)
 const mysql = require('mysql2');
 const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Halo_2017',
-    database: 'dbPagWeb'
+    host: 'tu_host_de_base_de_datos', // Reemplaza con la dirección IP o nombre de host correcto
+    user: 'tu_usuario',
+    password: 'tu_contraseña',
+    database: 'tu_base_de_datos'
 });
 
+// Manejar errores de conexión a la base de datos
 connection.connect((err) => {
     if (err) {
         console.error('Error conectando a la base de datos:', err.stack);
@@ -31,26 +32,24 @@ connection.connect((err) => {
 
 // Ruta para manejar el registro de usuarios
 app.post('/registro', async (req, res) => {
-    const { nombre, email, contraseña, address, phone } = req.body;
-    console.log('Datos recibidos del formulario:', nombre, email, contraseña, address, phone);
+    const { nombre, email, contraseña, direccion_envio, telefono } = req.body;
+    console.log('Datos recibidos del formulario:', nombre, email, direccion_envio, telefono);
 
-    // Asegúrate de que los datos estén definidos y no sean undefined
+    // Asegurar que los datos requeridos están presentes
     if (!nombre || !email || !contraseña) {
-        res.status(400).send('Faltan campos requeridos');
-        return;
+        return res.status(400).send('Faltan campos requeridos');
     }
 
     try {
         // Hash de la contraseña utilizando bcrypt
-        const hashedPassword = await bcrypt.hash(contraseña, 10); // 10 es el número de rondas de hashing
+        const hashedPassword = await bcrypt.hash(contraseña, 10);
 
         // Insertar usuario en la base de datos
         const insertQuery = 'INSERT INTO usuarios (nombre_usuario, correo_electronico, contrasena, direccion_envio, telefono) VALUES (?, ?, ?, ?, ?)';
-        connection.query(insertQuery, [nombre, email, hashedPassword, address, phone], (err, result) => {
+        connection.query(insertQuery, [nombre, email, hashedPassword, direccion_envio, telefono], (err, result) => {
             if (err) {
                 console.error('Error al registrar usuario:', err);
-                res.status(500).send('Error al registrar usuario');
-                return;
+                return res.status(500).send('Error al registrar usuario');
             }
             console.log('Usuario registrado con éxito');
             res.redirect('/registro_exitoso.html'); // Redirigir a una página de registro exitoso
@@ -60,9 +59,10 @@ app.post('/registro', async (req, res) => {
         res.status(500).send('Error al registrar usuario');
     }
 });
-// Servir archivo HTML principal
+
+// Ruta principal para servir el archivo HTML
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Iniciar el servidor
