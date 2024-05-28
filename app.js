@@ -9,16 +9,16 @@ const port = process.env.PORT || 3000;
 // Middleware para manejar datos de formularios
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Middleware para servir archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
+// Middleware para servir archivos estáticos desde el directorio principal
+app.use(express.static(__dirname));
 
 // Conexión a la base de datos MySQL (configuración básica, ajusta según tu entorno)
 const mysql = require('mysql2');
 const connection = mysql.createConnection({
-    host: 'tu_host_de_base_de_datos', // Reemplaza con la dirección IP o nombre de host correcto
-    user: 'tu_usuario',
-    password: 'tu_contraseña',
-    database: 'tu_base_de_datos'
+    host: 'localhost',
+    user: 'root',
+    password: 'Halo_2017',
+    database: 'dbPagWeb'
 });
 
 // Manejar errores de conexión a la base de datos
@@ -62,7 +62,7 @@ app.post('/registro', async (req, res) => {
 
 // Ruta principal para servir el archivo HTML
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Iniciar el servidor
